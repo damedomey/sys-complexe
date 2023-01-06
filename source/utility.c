@@ -214,6 +214,8 @@ void extraction(graph *g, int bestNode){
 }
 
 void distributionDistance(graph *g){
+    FILE *dataOut;
+    char filename[500];
     double p = 0;
     int *choices = randomNodes(g->n, g->n);
     int *distance = (int*) malloc(g->n * sizeof(int));
@@ -231,10 +233,21 @@ void distributionDistance(graph *g){
                 p++;
             }
         }
+
+        // Ecriture dans le fichier de sortie à chaque 1000 noeuds pour suivre l'évolution
+        if (i % 1000 == 0) {
+            sprintf( filename,"data/distribution_distance_%d.txt", i);
+            dataOut = fopen(filename, "w");
+            for (int j = 0; j < 20; j++){
+                if (output[j] > 0) {
+                    fprintf(dataOut,"%d %d %lf\n", j, output[j],  output[j]/p);
+                }
+            }
+            fclose(dataOut);
+        }
     }
 
-    // Ecriture dans le fichier de sortie
-    FILE *dataOut;
+    // Ecriture dans le fichier de sortie si tous les calculs ont été faits
     dataOut = fopen("data/distribution_distance.txt", "w");
     for (int i=0; i<20; i++){
         if (output[i] > 0) {
